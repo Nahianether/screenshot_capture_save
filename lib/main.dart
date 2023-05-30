@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 
 void main() => runApp(const MyApp());
@@ -57,17 +60,24 @@ class MyHomePageState extends State<MyHomePage> {
               child: Container(
                 padding: const EdgeInsets.all(30.0),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.blueAccent, width: 5.0),
+                  border: Border.all(color: Colors.blueAccent, width: 2.0),
                   color: Colors.amberAccent,
                 ),
-                child: Stack(
-                  children: [
-                    Image.asset(
-                      'assets/flutter_logo.png',
-                    ),
-                    const Text("This widget will be captured as an image"),
+                child: Column(
+                  children: const [
+                    Text("This widget will be captured as an image"),
+                    Text("This widget will be captured as an image"),
+                    Text("This widget will be captured as an image"),
                   ],
                 ),
+                // Stack(
+                //   children: [
+                //     Image.asset(
+                //       'assets/flutter_logo.png',
+                //     ),
+                //     const Text("This widget will be captured as an image"),
+                //   ],
+                // ),
               ),
             ),
             const SizedBox(
@@ -77,11 +87,12 @@ class MyHomePageState extends State<MyHomePage> {
               child: const Text(
                 'Capture Above Widget',
               ),
-              onPressed: () {
+              onPressed: () async {
                 screenshotController
                     .capture(delay: const Duration(milliseconds: 10))
                     .then((capturedImage) async {
-                  showCapturedWidget(context, capturedImage!);
+                  // await showCapturedWidget(context, capturedImage!);
+                  await saveImage(capturedImage!);
                 }).catchError((onError) {
                   log(onError);
                 });
@@ -146,5 +157,15 @@ class MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  Future<dynamic> saveImage(Uint8List capturedImage) async {
+    var directory = await getTemporaryDirectory();
+    String filePath =
+        '${directory.path}/algorithm_generation_tournament_fixture_calender.png';
+
+    File imageFile = File(filePath);
+    await imageFile.writeAsBytes(capturedImage);
+    debugPrint("File Saved to Gallery: $filePath");
   }
 }
